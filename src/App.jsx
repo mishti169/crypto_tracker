@@ -1,9 +1,9 @@
 import React from "react";
-import SearchBar from "./components/SearchBar/SearchBar";
+import CryptoTable from "./components/CryptoTable/CryptoTable";
 const App = () => {
   return (
     <div>
-      <SearchBar />
+      <CryptoTable />
     </div>
   );
 };
