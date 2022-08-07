@@ -52,7 +52,6 @@ const CryptoTable = () => {
   }, []);
 
   useEffect(() => {
-    console.log("hi");
     setFilteredCoinData(coinData);
   }, [coinData]);
 
