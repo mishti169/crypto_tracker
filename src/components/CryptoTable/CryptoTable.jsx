@@ -56,13 +56,15 @@ const CryptoTable = () => {
 
   return (
     <div>
-      <input
-        type="search"
-        placeholder="Enter the coin name"
-        onChange={handleChange}
-        className="input"
-        autoFocus
-      />
+      <div className="search">
+        <input
+          type="search"
+          placeholder="Enter the coin name"
+          onChange={handleChange}
+          className="input"
+          autoFocus
+        />
+      </div>
 
       <Table columns={columns} dataSource={filteredCoinData} />
     </div>
