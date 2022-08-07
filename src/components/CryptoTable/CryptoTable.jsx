@@ -37,7 +37,6 @@ const CryptoTable = () => {
   };
 
   const handleChange = (e) => {
-    e.preventDefault();
     const filteredData = coinData.filter((currentCoin) => {
       return currentCoin.name
         .toLowerCase()
@@ -57,15 +56,13 @@ const CryptoTable = () => {
 
   return (
     <div>
-      <form className="search">
-        <input
-          type="search"
-          placeholder="Enter the coin name"
-          onChange={handleChange}
-          className="input"
-          autoFocus
-        />
-      </form>
+      <input
+        type="search"
+        placeholder="Enter the coin name"
+        onChange={handleChange}
+        className="input"
+        autoFocus
+      />
 
       <Table columns={columns} dataSource={filteredCoinData} />
     </div>
