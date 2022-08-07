@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Table } from "antd";
+import { Select } from "antd";
 import axios from "axios";
 import "./CryptoTable.css";
+import { Option } from "antd/lib/mentions";
 
 const CryptoTable = () => {
   const [coinData, setCoinData] = useState([]);
   const [filteredCoinData, setFilteredCoinData] = useState([]);
-
+  const { Option } = Select;
   const columns = [
     {
       title: "Coin Name",
@@ -65,7 +67,23 @@ const CryptoTable = () => {
           autoFocus
         />
       </div>
-
+      <div>
+        <Select defaultValue="Current Price">
+          <Option value="Current Price">Current Price</Option>
+          <Option value="Lowest First">Lowest First</Option>
+          <Option value="Highest First">Highest First</Option>
+        </Select>
+        <Select defaultValue="Market Capital">
+          <Option value="Market Capital">Market Capital</Option>
+          <Option value="Lowest First">Lowest First</Option>
+          <Option value="Highest First">Highest First</Option>
+        </Select>
+        <Select defaultValue="% Change">
+          <Option value="% Change">% Change</Option>
+          <Option value="Lowest First">Lowest First</Option>
+          <Option value="Highest First">Highest First</Option>
+        </Select>
+      </div>
       <Table columns={columns} dataSource={filteredCoinData} />
     </div>
   );
