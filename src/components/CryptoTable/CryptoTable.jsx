@@ -120,7 +120,7 @@ const CryptoTable = () => {
           className="input"
           autoFocus
         />
-        <div>
+        <div className="dropdownBar">
           <Select
             defaultValue="CurrentPrice"
             onChange={(value) => handleDataChange(value, "currPrice")}
@@ -129,7 +129,6 @@ const CryptoTable = () => {
             <Option value="LowestFirst">Lowest First</Option>
             <Option value="HighestFirst">Highest First</Option>
           </Select>
-
           <Select
             defaultValue="% Change"
             onChange={(value) => handleDataChange(value, "change")}

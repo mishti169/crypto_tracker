@@ -2,15 +2,20 @@
   display: flex;
   justify-content: center;
   padding: 4rem 0;
+  gap: 4rem;
 }
 .input {
   width: 50%;
-  height: 3rem;
   border-radius: 0.5rem;
   border: 1px solid #ccc;
   padding: 0.5rem;
 }
 .input:focus {
   outline: none;
-  background-color: rgb(238, 238, 238);
+  background-color: rgb(247, 247, 247);
+}
+.dropdownBar {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
