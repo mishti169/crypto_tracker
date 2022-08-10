@@ -40,7 +40,7 @@ const CryptoTable = () => {
   const { Option } = Select;
   const columns = [
     {
-      title: "Coin Name",
+      title: () => <b style={{ fontSize: "18px" }}>Coin Name</b>,
       key: "name",
       dataIndex: "name",
       render: (_, { name, image }) => {
@@ -52,9 +52,35 @@ const CryptoTable = () => {
         );
       },
     },
-    { title: "Current Price", key: "price", dataIndex: "currPrice" },
-    { title: "% Change", key: "change", dataIndex: "change" },
-    { title: "Market capital", key: "capital", dataIndex: "capital" },
+    {
+      title: () => <b style={{ fontSize: "16px" }}>Current Price</b>,
+      key: "price",
+      dataIndex: "currPrice",
+      align: "right",
+      width: "150px",
+    },
+    {
+      title: () => <b style={{ fontSize: "16px" }}>% Change</b>,
+      key: "change",
+      dataIndex: "change",
+      align: "right",
+      width: "150px",
+      render: (percentage) => {
+        const color = percentage > 0 ? "green" : "red";
+        return (
+          <>
+            <span style={{ color: color }}>{percentage}</span>
+          </>
+        );
+      },
+    },
+    {
+      title: () => <b style={{ fontSize: "16px" }}>Market capital</b>,
+      key: "capital",
+      dataIndex: "capital",
+      align: "right",
+      width: "180px",
+    },
   ];
 
   const getApiData = async () => {
@@ -157,7 +183,11 @@ const CryptoTable = () => {
         </div>
       </div>
 
-      <Table columns={columns} dataSource={filteredCoinData} />
+      <Table
+        columns={columns}
+        dataSource={filteredCoinData}
+        className="table"
+      />
     </div>
   );
 };
