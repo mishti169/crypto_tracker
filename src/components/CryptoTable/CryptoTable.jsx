@@ -43,6 +43,14 @@ const CryptoTable = () => {
       title: "Coin Name",
       key: "name",
       dataIndex: "name",
+      render: (_, { name, image }) => {
+        return (
+          <>
+            <img src={image} alt="" width={32} />
+            <span style={{ marginLeft: "10px" }}>{name}</span>
+          </>
+        );
+      },
     },
     { title: "Current Price", key: "price", dataIndex: "currPrice" },
     { title: "% Change", key: "change", dataIndex: "change" },
@@ -57,10 +65,11 @@ const CryptoTable = () => {
     const coinDataArr = data.map((currCoin) => {
       return {
         name: currCoin.name,
+        image: currCoin.image,
         key: currCoin.id,
         currPrice: currCoin.current_price,
         change: Number(currCoin.price_change_percentage_24h.toFixed(2)),
-        capital: getB(currCoin.market_cap), //100.2B
+        capital: getB(currCoin.market_cap),
       };
     });
 
