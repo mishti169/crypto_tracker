@@ -1,17 +1,27 @@
-import React, { useEffect, useState } from "react";
-import { Table } from "antd";
-import { Select } from "antd";
+import { Select, Table } from "antd";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
 import "./CryptoTable.css";
 
-const bubbleSort = (arr, type) => {
+// if value is in Billion format then remove B
+// convert String to number
+// then do comparison
+
+const convertBillionToNumber = (billionStr) => {
+  // billionStr = 43.56B , 327506.32B, 0.28B, 485.27B
+  return Number(billionStr.replace("B", ""));
+};
+
+const bubbleSort = (arr, type, field) => {
   for (let i = 0; i < arr.length; i++) {
     // Last i elements are already in place
     for (let j = 0; j < arr.length - i - 1; j++) {
+      //
+      const firstValue = convertBillionToNumber(arr[j][field]);
+      const secondValue = convertBillionToNumber(arr[j + 1][field]);
+
       const condition =
-        type === "asc"
-          ? arr[j].currPrice > arr[j + 1].currPrice
-          : arr[j].currPrice < arr[j + 1].currPrice;
+        type === "asc" ? firstValue > secondValue : firstValue < secondValue;
       // Checking if the item at present iteration
       // is greater than the next iteration
       if (condition) {
@@ -23,7 +33,6 @@ const bubbleSort = (arr, type) => {
     }
   }
 };
-
 const CryptoTable = () => {
   const [coinData, setCoinData] = useState([]);
   const [inputVal, setInputVal] = useState("");
@@ -50,8 +59,8 @@ const CryptoTable = () => {
         name: currCoin.name,
         key: currCoin.id,
         currPrice: currCoin.current_price,
-        change: currCoin.price_change_percentage_24h,
-        capital: currCoin.market_cap,
+        change: Number(currCoin.price_change_percentage_24h.toFixed(2)),
+        capital: getB(currCoin.market_cap), //100.2B
       };
     });
 
@@ -69,18 +78,23 @@ const CryptoTable = () => {
     setInputVal(e.target.value);
   };
 
-  const handlePriceChange = (value) => {
-    const newFilteredCoinData = [...filteredCoinData];
+  const handleDataChange = (value, field) => {
+    const newSortedByPriceCoinData = [...filteredCoinData];
 
     if (value === "LowestFirst") {
-      bubbleSort(newFilteredCoinData, "asc");
-      setFilteredCoinData(newFilteredCoinData);
+      bubbleSort(newSortedByPriceCoinData, "asc", field);
+      setFilteredCoinData(newSortedByPriceCoinData);
     } else if (value === "HighestFirst") {
-      bubbleSort(newFilteredCoinData, "des");
-      setFilteredCoinData(newFilteredCoinData);
+      bubbleSort(newSortedByPriceCoinData, "des", field);
+      setFilteredCoinData(newSortedByPriceCoinData);
     } else {
       filterData();
     }
+  };
+  const getB = (val) => {
+    if (val < 1000000) return val;
+    const ans = val / 1000000000;
+    return ans.toFixed(2) + "B"; //100.2B > 85.6B
   };
 
   useEffect(() => {
@@ -107,18 +121,28 @@ const CryptoTable = () => {
           autoFocus
         />
         <div>
-          <Select defaultValue="CurrentPrice" onChange={handlePriceChange}>
+          <Select
+            defaultValue="CurrentPrice"
+            onChange={(value) => handleDataChange(value, "currPrice")}
+          >
             <Option value="CurrentPrice">Current Price</Option>
             <Option value="LowestFirst">Lowest First</Option>
             <Option value="HighestFirst">Highest First</Option>
           </Select>
-          <Select defaultValue="Market Capital">
-            <Option value="MarketCapital">Market Capital</Option>
+
+          <Select
+            defaultValue="% Change"
+            onChange={(value) => handleDataChange(value, "change")}
+          >
+            <Option value="%Change">% Change</Option>
             <Option value="LowestFirst">Lowest First</Option>
             <Option value="HighestFirst">Highest First</Option>
           </Select>
-          <Select defaultValue="% Change">
-            <Option value="%Change">% Change</Option>
+          <Select
+            defaultValue="Market Capital"
+            onChange={(value) => handleDataChange(value, "capital")}
+          >
+            <Option value="MarketCapital">Market Capital</Option>
             <Option value="LowestFirst">Lowest First</Option>
             <Option value="HighestFirst">Highest First</Option>
           </Select>
