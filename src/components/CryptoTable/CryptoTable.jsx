@@ -1,4 +1,4 @@
-import { Select, Table } from "antd";
+import { Select, Table, Modal } from "antd";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import "./CryptoTable.css";
@@ -37,18 +37,28 @@ const CryptoTable = () => {
   const [coinData, setCoinData] = useState([]);
   const [inputVal, setInputVal] = useState("");
   const [filteredCoinData, setFilteredCoinData] = useState([]);
+  const [isVisible, setIsVisible] = useState(false);
+  const [selectedCoin, setSelectedCoin] = useState({});
   const { Option } = Select;
   const columns = [
     {
       title: () => <b style={{ fontSize: "18px" }}>Coin Name</b>,
       key: "name",
       dataIndex: "name",
-      render: (_, { name, image }) => {
+      render: (_, currCoin) => {
+        const { name, image } = currCoin;
+        const showModal = () => {
+          setIsVisible(true);
+          setSelectedCoin(currCoin);
+        };
+
         return (
-          <>
-            <img src={image} alt="" width={32} />
-            <span style={{ marginLeft: "10px" }}>{name}</span>
-          </>
+          <div>
+            <div onClick={showModal}>
+              <img src={image} alt="" width={32} />
+              <span style={{ marginLeft: "10px" }}>{name}</span>
+            </div>
+          </div>
         );
       },
     },
@@ -82,6 +92,9 @@ const CryptoTable = () => {
       width: "180px",
     },
   ];
+  const handleCancel = () => {
+    setIsVisible(false);
+  };
 
   const getApiData = async () => {
     const { data } = await axios.get(
@@ -188,6 +201,16 @@ const CryptoTable = () => {
         dataSource={filteredCoinData}
         className="table"
       />
+      <Modal title="Mishti Modal" visible={isVisible} onCancel={handleCancel}>
+        <div style={{ display: "flex", justifyContent: "space-around" }}>
+          <img src={selectedCoin.image} alt={selectedCoin.name} width="140px" />
+          <div>
+            <h2>{selectedCoin.name}</h2>
+            <h3>Current-Price: {selectedCoin.currPrice}</h3>
+            <h3>Market Capital: {selectedCoin.capital}</h3>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
