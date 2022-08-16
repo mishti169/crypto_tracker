@@ -118,6 +118,10 @@ const CryptoTable = () => {
     dataFormat: "json",
     dataSource,
   };
+  const showModal = (currentCoin) => {
+    setIsVisible(true);
+    setSelectedCoin(currentCoin);
+  };
   const columns = [
     {
       title: () => <b style={{ fontSize: "18px" }}>Coin Name</b>,
@@ -125,14 +129,10 @@ const CryptoTable = () => {
       dataIndex: "name",
       render: (_, currCoin) => {
         const { name, image } = currCoin;
-        const showModal = () => {
-          setIsVisible(true);
-          setSelectedCoin(currCoin);
-        };
 
         return (
           <div>
-            <div onClick={showModal}>
+            <div>
               <img src={image} alt="" width={32} />
               <span style={{ marginLeft: "10px" }}>{name}</span>
             </div>
@@ -275,6 +275,13 @@ const CryptoTable = () => {
       </div>
 
       <Table
+        onRow={(record) => {
+          return {
+            onClick: () => {
+              showModal(record);
+            },
+          };
+        }}
         columns={columns}
         dataSource={filteredCoinData}
         className="table"
