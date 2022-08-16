@@ -1,15 +1,15 @@
 import { Select, Table, Modal } from "antd";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import FusionCharts from "fusioncharts";
 import ReactFusioncharts from "react-fusioncharts";
-import charts from "fusioncharts/fusioncharts.charts";
+import Charts from "fusioncharts/fusioncharts.charts";
 import FusionTheme from "fusioncharts/themes/fusioncharts.theme.fusion";
 
 import "./CryptoTable.css";
 
-charts(FusionCharts);
-
+ReactFusioncharts.fcRoot(FusionCharts, Charts, FusionTheme);
+const ReactFC = React.lazy(() => import("react-fusioncharts"));
 const dataSource = {
   chart: {
     caption: "Average Fastball Velocity",
@@ -269,7 +269,12 @@ const CryptoTable = () => {
         dataSource={filteredCoinData}
         className="table"
       />
-      <Modal title="Mishti Modal" visible={isVisible} onCancel={handleCancel}>
+      <Modal
+        title="Mishti Modal"
+        visible={isVisible}
+        onCancel={handleCancel}
+        width="900px"
+      >
         <div style={{ display: "flex", justifyContent: "space-around" }}>
           <img src={selectedCoin.image} alt={selectedCoin.name} width="140px" />
           <div>
@@ -279,13 +284,15 @@ const CryptoTable = () => {
           </div>
         </div>
         <div>
-          <ReactFusioncharts
-            type="line"
-            width="100%"
-            height="100%"
-            dataFormat="json"
-            dataSource={dataSource}
-          />
+          <Suspense fallback={<div>Loading...</div>}>
+            <ReactFC
+              type="line"
+              width="100%"
+              height="100%"
+              dataFormat="json"
+              dataSource={dataSource}
+            />
+          </Suspense>
         </div>
       </Modal>
     </div>
