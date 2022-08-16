@@ -1,10 +1,11 @@
-import { Select, Table, Modal } from "antd";
+import { Modal, Select, Table } from "antd";
 import axios from "axios";
-import React, { useEffect, useState, Suspense } from "react";
 import FusionCharts from "fusioncharts";
-import ReactFusioncharts from "react-fusioncharts";
 import Charts from "fusioncharts/fusioncharts.charts";
 import FusionTheme from "fusioncharts/themes/fusioncharts.theme.fusion";
+import React, { Suspense, useEffect, useState } from "react";
+import ReactFusioncharts from "react-fusioncharts";
+import { format, fromUnixTime } from "date-fns";
 
 import "./CryptoTable.css";
 
@@ -41,6 +42,11 @@ const bubbleSort = (arr, type, field) => {
     }
   }
 };
+const getDateTimeFromTimeStamp = (timeStamp) => {
+  const dateObj = fromUnixTime(parseInt(timeStamp / 1000));
+  return format(dateObj, "dd/MM/yyyy HH:mm:ss");
+};
+
 const CryptoTable = () => {
   const [coinData, setCoinData] = useState([]);
   const [inputVal, setInputVal] = useState("");
@@ -48,67 +54,19 @@ const CryptoTable = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [selectedCoin, setSelectedCoin] = useState({});
   const { Option } = Select;
+  const [chartData, setChartData] = useState([]);
 
   const dataSource = {
     chart: {
-      caption: "Average Fastball Velocity",
-      yaxisname: "Velocity (in mph)",
+      caption: "Price changes",
+      yaxisname: "price",
+      xaxisname: "time",
       subcaption: "[2005-2016]",
-      numbersuffix: " mph",
       rotatelabels: "1",
       setadaptiveymin: "1",
       theme: "fusion",
     },
-    data: [
-      {
-        label: "2005",
-        value: "89.45",
-      },
-      {
-        label: "2006",
-        value: "89.87",
-      },
-      {
-        label: "2007",
-        value: "89.64",
-      },
-      {
-        label: "2008",
-        value: "90.13",
-      },
-      {
-        label: "2009",
-        value: "90.67",
-      },
-      {
-        label: "2010",
-        value: "90.54",
-      },
-      {
-        label: "2011",
-        value: "90.75",
-      },
-      {
-        label: "2012",
-        value: "90.8",
-      },
-      {
-        label: "2013",
-        value: "91.16",
-      },
-      {
-        label: "2014",
-        value: "91.37",
-      },
-      {
-        label: "2015",
-        value: "91.66",
-      },
-      {
-        label: "2016",
-        value: "91.8",
-      },
-    ],
+    data: chartData,
   };
 
   const chartConfigs = {
@@ -223,6 +181,18 @@ const CryptoTable = () => {
     return ans.toFixed(2) + "B"; //100.2B > 85.6B
   };
 
+  const getChartApiData = async (id) => {
+    const { data } = await axios.get(
+      `https://api.coingecko.com/api/v3/coins/${id}/market_chart/range?vs_currency=usd&from=1659332803&to=1660565049`
+    );
+    const { prices } = data;
+    const convertedData = prices.map((currItem) => {
+      const [timeStamp, price] = currItem;
+      const dateTime = getDateTimeFromTimeStamp(timeStamp);
+      return { label: dateTime, value: price };
+    });
+    setChartData(convertedData);
+  };
   useEffect(() => {
     getApiData();
   }, []);
@@ -279,6 +249,7 @@ const CryptoTable = () => {
           return {
             onClick: () => {
               showModal(record);
+              getChartApiData(record.key);
             },
           };
         }}
