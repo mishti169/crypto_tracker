@@ -184,7 +184,7 @@ const CryptoTable = () => {
 
   const getChartApiData = async (id) => {
     const { data } = await axios.get(
-      `https://api.coingecko.com/api/v3/coins/${id}/market_chart/range?vs_currency=usd&from=1659332803&to=1660710982`
+      `https://api.coingecko.com/api/v3/coins/${id}/market_chart/range?vs_currency=inr&from=1659332803&to=1660710982`
     );
     const { prices } = data;
     const convertedData = prices.map((currItem) => {
