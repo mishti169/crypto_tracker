@@ -18,7 +18,6 @@ const ReactFC = React.lazy(() => import("react-fusioncharts"));
 
 const convertBillionToNumber = (billionStr) => {
   // billionStr = 43.56B , 327506.32B, 0.28B, 485.27B
-  console.log(billionStr, "str");
   return Number(billionStr.toString().replace("B", ""));
 };
 
@@ -207,7 +206,6 @@ const CryptoTable = () => {
   const getChartApiData = async (id) => {
     const toTimeSTamp = getUnixTime(new Date());
     const fromTimeStamp = getFromTimeStamp(timeRange);
-    console.log(toTimeSTamp);
 
     const { data } = await axios.get(
       `https://api.coingecko.com/api/v3/coins/${id}/market_chart/range?vs_currency=inr&from=${fromTimeStamp}&to=${toTimeSTamp}`
