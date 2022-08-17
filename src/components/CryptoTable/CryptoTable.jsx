@@ -5,7 +5,7 @@ import Charts from "fusioncharts/fusioncharts.charts";
 import FusionTheme from "fusioncharts/themes/fusioncharts.theme.fusion";
 import React, { Suspense, useEffect, useState } from "react";
 import ReactFusioncharts from "react-fusioncharts";
-import { format, fromUnixTime } from "date-fns";
+import { format, fromUnixTime, getUnixTime, sub } from "date-fns";
 
 import "./CryptoTable.css";
 
@@ -47,6 +47,27 @@ const getDateTimeFromTimeStamp = (timeStamp) => {
   const dateObj = fromUnixTime(parseInt(timeStamp / 1000));
   return format(dateObj, "dd/MM/yyyy HH:mm:ss");
 };
+const getFromTimeStamp = (timeRange) => {
+  if (timeRange === "7D") {
+    const ans = sub(new Date(), { weeks: 1 });
+    return getUnixTime(ans);
+  } else if (timeRange === "1M") {
+    const ans = sub(new Date(), { months: 1 });
+    return getUnixTime(ans);
+  } else if (timeRange === "3M") {
+    const ans = sub(new Date(), { months: 3 });
+    return getUnixTime(ans);
+  } else if (timeRange === "1Y") {
+    const ans = sub(new Date(), { years: 1 });
+    return getUnixTime(ans);
+  } else if (timeRange === "3Y") {
+    const ans = sub(new Date(), { years: 3 });
+    return getUnixTime(ans);
+  } else {
+    const ans = sub(new Date(), { days: 1 });
+    return getUnixTime(ans);
+  }
+};
 
 const CryptoTable = () => {
   const [coinData, setCoinData] = useState([]);
@@ -56,6 +77,7 @@ const CryptoTable = () => {
   const [selectedCoin, setSelectedCoin] = useState({});
   const { Option } = Select;
   const [chartData, setChartData] = useState([]);
+  const [timeRange, setTimeRange] = useState("");
 
   const dataSource = {
     chart: {
@@ -183,13 +205,16 @@ const CryptoTable = () => {
   };
 
   const getChartApiData = async (id) => {
+    const toTimeSTamp = getUnixTime(new Date());
+    const fromTimeStamp = getFromTimeStamp(timeRange);
+    console.log(toTimeSTamp);
+
     const { data } = await axios.get(
-      `https://api.coingecko.com/api/v3/coins/${id}/market_chart/range?vs_currency=inr&from=1659332803&to=1660710982`
+      `https://api.coingecko.com/api/v3/coins/${id}/market_chart/range?vs_currency=inr&from=${fromTimeStamp}&to=${toTimeSTamp}`
     );
     const { prices } = data;
     const convertedData = prices.map((currItem) => {
       const [timeStamp, price] = currItem;
-      console.log(price, "am price");
       const dateTime = getDateTimeFromTimeStamp(timeStamp);
       return { label: dateTime, value: price };
     });
@@ -206,6 +231,12 @@ const CryptoTable = () => {
   useEffect(() => {
     filterData();
   }, [inputVal]);
+  useEffect(() => {
+    if (timeRange) {
+      // api
+      getChartApiData(selectedCoin.key);
+    }
+  }, [timeRange]);
 
   return (
     <div>
@@ -274,8 +305,18 @@ const CryptoTable = () => {
           </div>
         </div>
         <div>
+          <Select defaultValue="1D" onChange={(value) => setTimeRange(value)}>
+            <Option value="1D">1D</Option>
+            <Option value="7D">7D</Option>
+            <Option value="1M">1M</Option>
+            <Option value="3M">3M</Option>
+            <Option value="6M">6M</Option>
+            <Option value="1Y">1Y</Option>
+          </Select>
           <Suspense fallback={<div>Loading...</div>}>
-            <ReactFC {...chartConfigs} />
+            <div style={{ margin: "10px 0" }}>
+              <ReactFC {...chartConfigs} />
+            </div>
           </Suspense>
         </div>
       </Modal>
