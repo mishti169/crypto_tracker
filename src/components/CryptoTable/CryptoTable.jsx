@@ -291,7 +291,7 @@ const CryptoTable = () => {
         className="table"
       />
       <Modal
-        title="Mishti Modal"
+        title="Coin Details"
         visible={isVisible}
         onCancel={handleCancel}
         width="900px"
