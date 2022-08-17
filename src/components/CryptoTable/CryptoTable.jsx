@@ -18,7 +18,8 @@ const ReactFC = React.lazy(() => import("react-fusioncharts"));
 
 const convertBillionToNumber = (billionStr) => {
   // billionStr = 43.56B , 327506.32B, 0.28B, 485.27B
-  return Number(billionStr.replace("B", ""));
+  console.log(billionStr, "str");
+  return Number(billionStr.toString().replace("B", ""));
 };
 
 const bubbleSort = (arr, type, field) => {
@@ -61,7 +62,7 @@ const CryptoTable = () => {
       caption: "Price changes",
       yaxisname: "price",
       xaxisname: "time",
-      subcaption: "[2005-2016]",
+      subcaption: "",
       rotatelabels: "1",
       setadaptiveymin: "1",
       theme: "fusion",
@@ -183,11 +184,12 @@ const CryptoTable = () => {
 
   const getChartApiData = async (id) => {
     const { data } = await axios.get(
-      `https://api.coingecko.com/api/v3/coins/${id}/market_chart/range?vs_currency=usd&from=1659332803&to=1660565049`
+      `https://api.coingecko.com/api/v3/coins/${id}/market_chart/range?vs_currency=usd&from=1659332803&to=1660710982`
     );
     const { prices } = data;
     const convertedData = prices.map((currItem) => {
       const [timeStamp, price] = currItem;
+      console.log(price, "am price");
       const dateTime = getDateTimeFromTimeStamp(timeStamp);
       return { label: dateTime, value: price };
     });
