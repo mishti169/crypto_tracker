@@ -77,6 +77,9 @@ const CryptoTable = () => {
   const { Option } = Select;
   const [chartData, setChartData] = useState([]);
   const [timeRange, setTimeRange] = useState("");
+  const [currPrice, setCurrPrice] = useState("CurrentPrice");
+  const [perChange, setPerChange] = useState("%Change");
+  const [mktCapital, setMktCapital] = useState("MarketCapital");
 
   const dataSource = {
     chart: {
@@ -249,24 +252,40 @@ const CryptoTable = () => {
         />
         <div className="dropdownBar">
           <Select
-            defaultValue="CurrentPrice"
-            onChange={(value) => handleDataChange(value, "currPrice")}
+            value={currPrice}
+            onChange={(value) => {
+              setCurrPrice(value);
+              setPerChange("%Change");
+              setMktCapital("MarketCapital");
+              handleDataChange(value, "currPrice");
+            }}
           >
             <Option value="CurrentPrice">Current Price</Option>
             <Option value="LowestFirst">Lowest First</Option>
             <Option value="HighestFirst">Highest First</Option>
           </Select>
           <Select
-            defaultValue="% Change"
-            onChange={(value) => handleDataChange(value, "change")}
+            value={perChange}
+            onChange={(value) => {
+              console.log("changed per Change");
+              setPerChange(value);
+              setCurrPrice("CurrentPrice");
+              setMktCapital("MarketCapital");
+              handleDataChange(value, "change");
+            }}
           >
             <Option value="%Change">% Change</Option>
             <Option value="LowestFirst">Lowest First</Option>
             <Option value="HighestFirst">Highest First</Option>
           </Select>
           <Select
-            defaultValue="Market Capital"
-            onChange={(value) => handleDataChange(value, "capital")}
+            value={mktCapital}
+            onChange={(value) => {
+              setMktCapital(value);
+              setCurrPrice("CurrentPrice");
+              setPerChange("%Change");
+              handleDataChange(value, "capital");
+            }}
           >
             <Option value="MarketCapital">Market Capital</Option>
             <Option value="LowestFirst">Lowest First</Option>
